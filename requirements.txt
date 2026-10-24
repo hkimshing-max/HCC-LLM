@@ -1,0 +1,16 @@
+# Python 3.11 is reported in the manuscript.
+# AutoGen 0.7.5 is reported in Methods; other historical versions are not locked.
+autogen-agentchat==0.7.5
+autogen-ext[openai]==0.7.5
+openai
+python-dotenv
+numpy
+pandas
+scikit-learn
+lifelines
+matplotlib
+seaborn
+wordcloud
+adjustText
+openpyxl
+SQLAlchemy
