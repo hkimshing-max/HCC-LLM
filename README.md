@@ -167,7 +167,7 @@ be obtained from the study's separately finalized Data Availability statement.
 This repository does not promise access on request or establish permission to
 share clinical data.
 
-## Authors, citation and reuse
+## Authors and citation
 
 Study authors: Jincheng Hong, Tianxin Xu, Songhui Rao, Jun Liang, Haozhong Li,
 Jiangnan Han, Gengjie Jia and Dandan Hu. Original source headers attribute the
@@ -176,7 +176,12 @@ supplied scripts to Jacob Xu; those author attributions are retained.
 Cite the manuscript title and the exact repository release or commit used.
 No journal acceptance, article DOI or repository DOI is asserted here.
 
-A software licence has not yet been selected by the code rights holders. This
-repository does not grant an additional MIT or other open-source licence until
-that choice is explicitly confirmed. See `docs/source_scope.md` for the scope
-of the supplied snapshot and the limits of the packaging checks.
+See [Source scope and reproducibility](docs/source_scope.md) for the scope of
+the supplied snapshot and the limits of the packaging checks.
+
+## License
+
+The source code and accompanying documentation are released under the
+[MIT License](LICENSE). Original source author attributions are retained.
+The software license does not grant access to patient-level data or change
+the terms of third-party models, datasets or dependencies.
