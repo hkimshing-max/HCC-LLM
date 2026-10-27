@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2025/12/30 10:19
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : run_hcc_agents.py
+# @File : run_deepseek_r1_distill_qwen_7b.py
 # @Software : PyCharm
 
 import asyncio
@@ -29,7 +28,7 @@ API_KEY = os.environ.get('HCC_API_KEY', '')
 async def main(split_data,file_name,OUTPUT_DIR):
 
     model_client = OpenAIChatCompletionClient(
-        model="Pro/deepseek-ai/DeepSeek-V3.2",
+        model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
         base_url="https://api.siliconflow.cn/v1",
         api_key=API_KEY,
         temperature=0,
@@ -192,8 +191,9 @@ async def run_all_patients(DATA_DIR, OUTPUT_DIR, max_concurrent):
 if __name__ == "__main__":
     # asyncio 异步并发
     DATA_DIR = os.environ.get('HCC_DATA_DIR', 'data/test_json')
-    OUTPUT_DIR = os.environ.get('HCC_OUTPUT_DIR', os.path.join(DATA_DIR, 'test_DeepSeek-V3.2-2'))
+
+    OUTPUT_DIR = os.environ.get('HCC_OUTPUT_DIR', os.path.join(DATA_DIR, 'test_DeepSeek_R1_Distill_Qwen_7B_1'))
 # Configure input/output locations using the HCC_* environment variables.
     # OUTPUT_DIR = os.path.join(DATA_DIR, 'test_result')
 
-    asyncio.run(run_all_patients(DATA_DIR, OUTPUT_DIR, max_concurrent=20))
+    asyncio.run(run_all_patients(DATA_DIR, OUTPUT_DIR, max_concurrent=1))

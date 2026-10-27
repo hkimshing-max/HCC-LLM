@@ -1,10 +1,8 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2026/4/17 14:42
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : conflict_win_with_time.py
+# @File : plot_conditional_blocking.py
 # @Software : PyCharm
-
 import os
 import glob
 import json
@@ -13,30 +11,18 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from wordcloud import WordCloud
 from collections import defaultdict
-import matplotlib.patheffects as path_effects
-
-# 如果你没有安装 adjustText，程序会正常运行并提示
-try:
-    from adjustText import adjust_text
-    HAS_ADJUST_TEXT = True
-except ImportError:
-    HAS_ADJUST_TEXT = False
 
 # ==========================================
 # 全局路径配置
 # ==========================================
 DATA_DIR = os.environ.get('HCC_EXPLANATION_DIR', 'outputs/model_outputs')
-CSV_PATH = os.environ.get('HCC_PREDICTIONS_CSV', 'outputs/model_outputs/ground_truth_with_predictions.csv')
-OUTPUT_BASE_DIR = os.environ.get('HCC_OUTPUT_DIR', 'outputs/conflict_win_with_time')
+OUTPUT_BASE_DIR = os.environ.get('HCC_OUTPUT_DIR', 'outputs/node_blocking')
 
 os.makedirs(OUTPUT_BASE_DIR, exist_ok=True)
 
-# ==========================================
-# 核心数据提取与解析模块
-# ==========================================
 def extract_agent_json(text, agent_name):
+    """鲁棒的 JSON 提取器"""
     search_str = f"[{agent_name}]"
     agent_idx = text.find(search_str)
     if agent_idx == -1: return None
@@ -55,6 +41,7 @@ def extract_agent_json(text, agent_name):
         try: return json.loads(text[start_idx:end_idx])
         except json.JSONDecodeError: return None
     return None
+
 
 def parse_atomic_features(raw_text):
     """
@@ -366,446 +353,320 @@ def parse_atomic_features(raw_text):
 
     return features
 
+def extract_block_reasons(criteria_text):
+    if not criteria_text: return ["Unknown_Criteria"]
+    atomics = parse_atomic_features(criteria_text)
+    risk_features = set()
+    safe_keywords = ['negative', 'single', 'unilobar', 'normal', 'good', 'complete', 'well-defined', 'small']
+
+    for a in atomics:
+        name = a['Atomic_Feature']
+        val = str(a['Value']).lower()
+        if name == 'Unclassified_Raw_Feature': continue
+        is_safe = any(safe_word in val for safe_word in safe_keywords)
+        if 'absent' in val and 'capsule' not in name.lower():
+            is_safe = True
+        if not is_safe:
+            risk_features.add(name)
+
+
+    text_lower = criteria_text.lower()
+
+    # 对应 Node 1B: 手术创伤/播散与生理代偿低下的复合风险
+    if "双重打击" in text_lower or "double hit" in text_lower:
+        risk_features.add("Compound_Perioperative_Risk")
+
+    # 对应 Node 2C: 肿瘤负荷(种子)与恶劣肝背景(土壤)的叠加
+    if "协同" in text_lower or "synergy" in text_lower:
+        risk_features.add("Seed_and_Soil_Synergy")
+
+    # 对应 Node 3B: 背景肝硬化/肝炎导致的远期新生肿瘤机制 (区域癌化)
+    if "de novo" in text_lower or "新生" in text_lower:
+        risk_features.add("Carcinogenic_Field_Effect")
+
+    return list(risk_features) if risk_features else ["Unclassified_Risk_Factor"]
 
 # ==========================================
-# 分析逻辑：静态权重 + 博弈胜率
+# 分析逻辑：动态提取条件阻断率
 # ==========================================
-def method_1_semantic_weight_scoring(file_paths):
-    weight_map = {"High": 3, "Medium": 2, "Low": 1}
-    feature_scores = defaultdict(list)
-    feature_origins = defaultdict(set)
+# def method_3_conditional_blocking_merged(file_paths):
+#     """生成合并时间窗的分析数据"""
+#     node_reach_counts = {
+#         "Early Recurrence (0-24m)": 0,
+#         "Late Recurrence (24-60m)": 0,
+#         "Very Late Recurrence (>60m)": 0
+#     }
+#     node_block_reasons = {
+#         "Early Recurrence (0-24m)": defaultdict(int),
+#         "Late Recurrence (24-60m)": defaultdict(int),
+#         "Very Late Recurrence (>60m)": defaultdict(int)
+#     }
+#
+#     for path in file_paths:
+#         try:
+#             with open(path, 'r', encoding='utf-8') as f: content = f.read()
+#         except: continue
+#
+#         final_data = extract_agent_json(content, "Final_Decision_Agent")
+#         if not final_data or "sequential_recurrence_tree" not in final_data: continue
+#
+#         execution_log = final_data["sequential_recurrence_tree"].get("execution_log", [])
+#         reached_0_24 = reached_24_60 = reached_60_plus = False
+#
+#         for step_info in execution_log:
+#             step_name = step_info.get("step", "")
+#             outcome = step_info.get("outcome", "").upper()
+#             criteria = step_info.get("criteria_check", "")
+#             is_stop = "STOP" in outcome or ("MET" in outcome and "NOT" not in outcome)
+#
+#             if "Node 1" in step_name or "Node 2" in step_name:
+#                 if not reached_0_24:
+#                     node_reach_counts["Early Recurrence (0-24m)"] += 1
+#                     reached_0_24 = True
+#                 if is_stop:
+#                     reasons = extract_block_reasons(criteria)
+#                     for r in reasons: node_block_reasons["Early Recurrence (0-24m)"][r] += 1
+#                     break
+#
+#             elif "Node 3" in step_name:
+#                 if not reached_24_60:
+#                     node_reach_counts["Late Recurrence (24-60m)"] += 1
+#                     reached_24_60 = True
+#                 if is_stop:
+#                     reasons = extract_block_reasons(criteria)
+#                     for r in reasons: node_block_reasons["Late Recurrence (24-60m)"][r] += 1
+#                     break
+#
+#             elif "Node 4" in step_name:
+#                 if not reached_60_plus:
+#                     node_reach_counts["Very Late Recurrence (>60m)"] += 1
+#                     reached_60_plus = True
+#                 if is_stop:
+#                     reasons = extract_block_reasons(criteria)
+#                     for r in reasons: node_block_reasons["Very Late Recurrence (>60m)"][r] += 1
+#                     break
+#
+#     results = []
+#     for node in ["Early Recurrence (0-24m)", "Late Recurrence (24-60m)", "Very Late Recurrence (>60m)"]:
+#         reach_count = node_reach_counts[node]
+#         if reach_count == 0: continue
+#         for reason, block_count in node_block_reasons[node].items():
+#             cond_rate = block_count / reach_count
+#             results.append({
+#                 "Evaluation_Window": node,
+#                 "Atomic_Feature_Name": reason,
+#                 "Reached_Count": reach_count,
+#                 "Blocked_Count": block_count,
+#                 "Conditional_Block_Rate": round(cond_rate, 3)
+#             })
+#
+#     df = pd.DataFrame(results)
+#     if not df.empty:
+#         df = df.sort_values(by=["Evaluation_Window", "Conditional_Block_Rate"], ascending=[True, False])
+#     return df
 
-    for path in file_paths:
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                content = f.read()
-        except: continue
 
-        risk_data = extract_agent_json(content, "Recurrence_Risk_Agent_1")
-        if not risk_data or "prognostic_factor_analysis" not in risk_data:
-            continue
-
-        analysis = risk_data["prognostic_factor_analysis"]
-        all_factors = analysis.get("favorable_factors", []) + analysis.get("unfavorable_factors", [])
-
-        for item in all_factors:
-            raw_factor = item.get("factor", "").strip()
-            weight_str = item.get("weight", "")
-
-            if raw_factor and weight_str in weight_map:
-                score = weight_map[weight_str]
-                atomic_list = parse_atomic_features(raw_factor)
-
-                for atomic in atomic_list:
-                    atomic_name = atomic['Atomic_Feature']
-                    atomic_val = atomic['Value']
-                    key = (atomic_name, atomic_val)
-                    feature_scores[key].append(score)
-                    feature_origins[key].add(raw_factor)
-
-    results = []
-    for key, scores in feature_scores.items():
-        atomic_name, atomic_val = key
-        freq = len(scores)
-        avg_score = np.mean(scores)
-        variance = np.var(scores)
-        global_importance = freq * avg_score
-        results.append({
-            "Atomic_Feature_Name": atomic_name,
-            "Feature_Value": atomic_val,
-            "Frequency": freq,
-            "Mean_Weight": round(avg_score, 2),
-            "Variance": round(variance, 2),
-            "Global_Importance": round(global_importance, 2),
-            "Original_Text_Sources": " | ".join(feature_origins[key])
-        })
-    return pd.DataFrame(results).sort_values(by="Global_Importance", ascending=False) if results else pd.DataFrame()
-
-def aggregate_by_atomic_feature_name(df):
-    if df.empty: return pd.DataFrame()
-    grouped = df.groupby('Atomic_Feature_Name')
-    results = []
-
-    for name, group in grouped:
-        freq_total = group['Frequency'].sum()
-        global_imp_total = group['Global_Importance'].sum()
-        mean_weight = global_imp_total / freq_total if freq_total > 0 else 0
-        sum_sq = (group['Frequency'] * (group['Variance'] + group['Mean_Weight']**2)).sum()
-        variance = (sum_sq / freq_total) - (mean_weight**2) if freq_total > 0 else 0
-
-        all_sources = set()
-        for sources in group['Original_Text_Sources']:
-            if pd.notna(sources) and sources.strip():
-                all_sources.update([s.strip() for s in sources.split(' | ')])
-        merged_sources = " | ".join(sorted(all_sources))
-
-        results.append({
-            "Atomic_Feature_Name": name,
-            "Frequency": freq_total,
-            "Mean_Weight": round(mean_weight, 2),
-            "Variance": round(variance, 2),
-            "Global_Importance": round(global_imp_total, 2),
-            "Original_Text_Sources": merged_sources
-        })
-    return pd.DataFrame(results).sort_values(by="Global_Importance", ascending=False).reset_index(drop=True)
-
-def enhanced_rule_based_conflict_parser(risk_data):
-    analysis = risk_data.get("prognostic_factor_analysis", {})
-    conflict_synth = risk_data.get("core_conflict_synthesis", {})
-    resolution_text = conflict_synth.get("balanced_resolution", "")
-
-    if not resolution_text or "Explain how you weighed them" in resolution_text or "Name of factor" in str(analysis):
-        return []
-
-    fav_list = [re.sub(r'\(.*?\)|（.*?）', '', f.get("factor", "")).strip() for f in analysis.get("favorable_factors", []) if f]
-    unfav_list = [re.sub(r'\(.*?\)|（.*?）', '', f.get("factor", "")).strip() for f in analysis.get("unfavorable_factors", []) if f]
-
-    alias_dict = {
-        "MVI": ["mvi", "微血管"],
-        "大血管侵犯": ["大血管", "门静脉", "pvtt", "静脉癌栓"],
-        "卫星结节": ["卫星"],
-        "肿瘤数目": ["单发", "多发", "多灶", "多结节"],
-        "肿瘤大小": ["大小", "最大径", "体积"],
-        "分化程度": ["分化"],
-        "AFP": ["afp", "甲胎蛋白"],
-        "包膜与被膜": ["被膜", "包膜", "假包膜", "浆膜"],
-        "肝功能储备": ["肝功能", "child-pugh", "albi", "储备", "全身状态", "ecog"],
-        "背景肝脏": ["肝硬化", "肝炎", "hbv", "慢性肝病", "纤维化"],
-        "切缘": ["切缘", "r0", "r1", "pcr"],
-        "淋巴结与远处转移": ["淋巴结", "转移", "m1", "n1"]
+def method_3_conditional_blocking_merged(file_paths):
+    """生成合并时间窗的分析数据 (精确支持 0-6m, 0-24m累计, 24-60m)"""
+    node_reach_counts = {
+        "Very Early Recurrence (0-6m)": 0,
+        "Early Recurrence (0-24m)": 0,
+        "Late Recurrence (24-60m)": 0
+    }
+    node_block_reasons = {
+        "Very Early Recurrence (0-6m)": defaultdict(int),
+        "Early Recurrence (0-24m)": defaultdict(int),
+        "Late Recurrence (24-60m)": defaultdict(int)
     }
 
-    def check_feature_mentioned(formal_name, text):
-        formal_lower = formal_name.lower()
-        text_lower = text.lower()
-        if formal_lower in text_lower: return True
-        for key, aliases in alias_dict.items():
-            if key in formal_lower or any(a in formal_lower for a in aliases):
-                if any(a in text_lower for a in aliases): return True
-        return False
-
-    mentioned_fav = [f for f in fav_list if check_feature_mentioned(f, resolution_text)]
-    mentioned_unfav = [f for f in unfav_list if check_feature_mentioned(f, resolution_text)]
-
-    if not mentioned_fav or not mentioned_unfav: return []
-
-    fav_win_markers = ["倾向有利", "大幅削弱", "保护力远超", "保护屏障", "被...削弱", "抵消", "权重远高于", "重大利好", "风险缓解", "缓冲"]
-    unfav_win_markers = ["倾向不利", "负面影响远超", "占据主导", "压制", "掩盖", "无法抵消", "极高风险", "放大", "主要风险驱动", "严重向极高", "根本性风险"]
-
-    cl_text = resolution_text.replace("'", "").replace("‘", "").replace("’", "")
-    fav_score = sum(1 for m in fav_win_markers if m in cl_text)
-    unfav_score = sum(1 for m in unfav_win_markers if m in cl_text)
-
-    battles = []
-    if fav_score > unfav_score:
-        for winner in mentioned_fav:
-            for loser in mentioned_unfav: battles.append((winner, loser))
-    elif unfav_score > fav_score:
-        for winner in mentioned_unfav:
-            for loser in mentioned_fav: battles.append((winner, loser))
-    return battles
-
-def method_2_core_conflict_win_rate(file_paths, df_agg=None):
-    win_counts = defaultdict(int)
-    total_battles = defaultdict(int)
-
     for path in file_paths:
         try:
-            with open(path, 'r', encoding='utf-8') as f:
-                content = f.read()
-            risk_data = extract_agent_json(content, "Recurrence_Risk_Agent_1")
-            if not risk_data: continue
-
-            battles = enhanced_rule_based_conflict_parser(risk_data)
-
-            for raw_winner, raw_loser in battles:
-                winner_atomics = parse_atomic_features(raw_winner)
-                loser_atomics = parse_atomic_features(raw_loser)
-
-                w_names = {a['Atomic_Feature'] for a in winner_atomics if a['Atomic_Feature'] != 'Unclassified_Raw_Feature'}
-                l_names = {a['Atomic_Feature'] for a in loser_atomics if a['Atomic_Feature'] != 'Unclassified_Raw_Feature'}
-
-                for w in w_names:
-                    for l in l_names:
-                        if w == l: continue
-                        win_counts[w] += 1
-                        total_battles[w] += 1
-                        total_battles[l] += 1
+            with open(path, 'r', encoding='utf-8') as f: content = f.read()
         except: continue
 
+        final_data = extract_agent_json(content, "Final_Decision_Agent")
+        if not final_data or "sequential_recurrence_tree" not in final_data: continue
+
+        execution_log = final_data["sequential_recurrence_tree"].get("execution_log", [])
+        reached_0_6 = reached_0_24 = reached_24_60 = False
+
+        for step_info in execution_log:
+            step_name = step_info.get("step", "")
+            outcome = step_info.get("outcome", "").upper()
+            criteria = step_info.get("criteria_check", "")
+
+            # 严格判定阻断
+            is_stop = "STOP" in outcome or ("MET" in outcome and "NOT" not in outcome)
+
+            if "Node 1" in step_name:
+                # 只要到达 Node 1，即代表进入了 0-6m 和 0-24m 两个评价窗
+                if not reached_0_6:
+                    node_reach_counts["Very Early Recurrence (0-6m)"] += 1
+                    reached_0_6 = True
+                if not reached_0_24:
+                    node_reach_counts["Early Recurrence (0-24m)"] += 1
+                    reached_0_24 = True
+
+                if is_stop:
+                    reasons = extract_block_reasons(criteria)
+                    for r in reasons:
+                        # Node 1 阻断，同时计入 0-6m 和 0-24m
+                        node_block_reasons["Very Early Recurrence (0-6m)"][r] += 1
+                        node_block_reasons["Early Recurrence (0-24m)"][r] += 1
+                    break
+
+            elif "Node 2" in step_name:
+                # 只有通过了 Node 1 才会到达 Node 2，仍属于 0-24m 评价窗
+                if not reached_0_24:
+                    node_reach_counts["Early Recurrence (0-24m)"] += 1
+                    reached_0_24 = True
+
+                if is_stop:
+                    reasons = extract_block_reasons(criteria)
+                    for r in reasons:
+                        # Node 2 阻断，仅计入 0-24m 累加窗
+                        node_block_reasons["Early Recurrence (0-24m)"][r] += 1
+                    break
+
+            elif "Node 3" in step_name:
+                if not reached_24_60:
+                    node_reach_counts["Late Recurrence (24-60m)"] += 1
+                    reached_24_60 = True
+
+                if is_stop:
+                    reasons = extract_block_reasons(criteria)
+                    for r in reasons:
+                        node_block_reasons["Late Recurrence (24-60m)"][r] += 1
+                    break
+
     results = []
-    for feature, total in total_battles.items():
-        wins = win_counts.get(feature, 0)
-        losses = total - wins
-        win_rate = wins / total if total > 0 else 0
-        results.append({
-            "Atomic_Feature_Name": feature,
-            "Total_Battles": total,
-            "Wins": wins,
-            "Losses": losses,
-            "Net_Wins": wins - losses,
-            "Win_Rate": round(win_rate, 3)
-        })
+    # 遍历我们指定需要的三个时间窗
+    for node in ["Very Early Recurrence (0-6m)", "Early Recurrence (0-24m)", "Late Recurrence (24-60m)"]:
+        reach_count = node_reach_counts[node]
+        if reach_count == 0: continue
+        for reason, block_count in node_block_reasons[node].items():
+            cond_rate = block_count / reach_count
+            results.append({
+                "Evaluation_Window": node,
+                "Atomic_Feature_Name": reason,
+                "Reached_Count": reach_count,
+                "Blocked_Count": block_count,
+                "Conditional_Block_Rate": round(cond_rate, 3)
+            })
 
-    df_win_rate = pd.DataFrame(results)
-
-    if df_agg is not None and not df_win_rate.empty and not df_agg.empty:
-        agg_subset = df_agg[['Atomic_Feature_Name', 'Global_Importance', 'Mean_Weight', 'Frequency']]
-        merged_df = pd.merge(df_win_rate, agg_subset, on='Atomic_Feature_Name', how='left')
-        merged_df = merged_df.fillna({'Global_Importance': 0, 'Mean_Weight': 0, 'Frequency': 0})
-        merged_df['Dominance_Score'] = (
-                merged_df['Win_Rate'] * np.log2(merged_df['Total_Battles'] + 1) * merged_df['Global_Importance']
-        ).round(2)
-        merged_df = merged_df.sort_values(by=["Dominance_Score", "Net_Wins"], ascending=[False, False])
-        return merged_df
-
-    elif not df_win_rate.empty:
-        df_win_rate = df_win_rate.sort_values(by=["Net_Wins", "Win_Rate"], ascending=[False, False])
-        return df_win_rate
-
-    return pd.DataFrame()
+    df = pd.DataFrame(results)
+    if not df.empty:
+        df = df.sort_values(by=["Evaluation_Window", "Conditional_Block_Rate"], ascending=[True, False])
+    return df
 
 # ==========================================
-# 可视化模块 (移除 plt.show 防阻塞)
+# 可视化模块：各时间窗独立绘图
 # ==========================================
-def plot_dominance_score(df, output_name):
+def plot_method3_bar_charts(csv_path, base_output_png):
+    """
+    智能动态可视化方案：
+    为 CSV 中存在的每一个 Evaluation_Window 独立绘制并保存一张图表。
+    不再进行强制并排合并，保证数据清晰和自适应。
+    """
+    if not os.path.exists(csv_path):
+        print(f"Error: {csv_path} not found.")
+        return
+
+    df = pd.read_csv(csv_path)
     if df.empty: return
-    plot_df = df.head(15).copy().sort_values('Dominance_Score', ascending=True)
-    plot_df['Display_Name'] = plot_df['Atomic_Feature_Name'].str.replace('_', ' ')
+
+    # 过滤掉无法归类或杂音特征，并美化名称
+    df = df[~df['Atomic_Feature_Name'].isin(["Unclassified_Risk_Factor", "Unknown_Criteria"])]
+    df['Display_Name'] = df['Atomic_Feature_Name'].str.replace('_', ' ')
 
     sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(12, 8))
-    palette = sns.color_palette("rocket", len(plot_df))
-    bars = plt.barh(plot_df['Display_Name'], plot_df['Dominance_Score'], color=palette)
 
-    max_score = plot_df['Dominance_Score'].max()
-    offset = max_score * 0.02
-    for bar in bars:
-        width = bar.get_width()
-        plt.text(width + offset, bar.get_y() + bar.get_height()/2,
-                 f'{width:.1f}', va='center', fontsize=14, color='#333333')
+    def add_labels_to_ax(ax, data_df):
+        """辅助函数：在柱状图条形内外智能添加标签"""
+        ax.set_xlim(0, 1)
+        for i, p in enumerate(ax.patches):
+            width = p.get_width()
+            if np.isnan(width): continue
+            count = data_df.iloc[i]['Blocked_Count']
 
-    plt.grid(False)
-    # plt.title('Conflict Dominance Score of Prognostic Factors', fontsize=16, fontweight='bold', pad=20)
-    plt.xlabel('Dominance Score', fontsize=16)
-    plt.xlim(0, max_score * 1.15)
-    plt.yticks(fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.tight_layout()
-    plt.savefig(output_name, format="pdf", dpi=300, bbox_inches="tight")
-    plt.show()
-    plt.close()
+            text_x = width + 0.02
+            ha_align = 'left'
+            text_color = '#333333'
 
-def plot_win_rate_vs_battles_bubble(df, output_name):
-    if df.empty or 'Global_Importance' not in df.columns: return
+            # 智能排版防溢出
+            if width > 0.85:
+                text_x = width - 0.02
+                ha_align = 'right'
+                text_color = 'white'
 
-    plot_df = df[df['Total_Battles'] >= 2].copy().reset_index(drop=True)
-    if plot_df.empty: return
-    plot_df['Display_Name'] = plot_df['Atomic_Feature_Name'].str.replace('_', ' ')
+            # ax.annotate(f'{width:.1%} (n={int(count)})',
+            ax.annotate(f'{width:.1%}',
+                        (text_x, p.get_y() + p.get_height() / 2),
+                        ha=ha_align, va='center', fontsize=14, fontweight='medium', color=text_color)
 
-    plot_df['X_plot'] = plot_df['Total_Battles'].astype(float)
-    plot_df['Y_plot'] = plot_df['Win_Rate'].astype(float)
+    # 遍历所有存在的数据窗 (Early, Late 等) 单独出图
+    windows = df['Evaluation_Window'].unique()
 
-    grouped = plot_df.groupby(['Total_Battles', 'Win_Rate'])
-    for (x_val, y_val), group in grouped:
-        n = len(group)
-        if n > 1:
-            radius_x = 0.15 + (0.02 * n)
-            radius_y = 0.015 + (0.002 * n)
-            angles = np.linspace(0, 2 * np.pi, n, endpoint=False)
-            plot_df.loc[group.index, 'X_plot'] = x_val + radius_x * np.cos(angles)
-            plot_df.loc[group.index, 'Y_plot'] = y_val + radius_y * np.sin(angles)
+    for window in windows:
+        # 获取当前时间窗的 Top 15 阻断因素
+        df_window = df[df['Evaluation_Window'] == window].sort_values('Conditional_Block_Rate', ascending=False).head(15).reset_index(drop=True)
 
-    sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(14, 10))
+        if df_window.empty:
+            continue
 
-    x = plot_df['X_plot']
-    y = plot_df['Y_plot']
-    c = plot_df['Dominance_Score']
-    sizes = plot_df['Global_Importance'] * 2.5 + 40
+        fig, ax = plt.subplots(figsize=(10, 8))
 
-    scatter = plt.scatter(x, y, s=sizes, c=c, cmap='viridis', alpha=0.6, edgecolors="white", linewidth=1.2, zorder=2)
+        # 智能匹配主色调与标题
+        if "Early" in window and "Very" not in window:
+            palette = 'Reds_r'
+            title_color = 'darkred'
+        elif "Late" in window and "Very" not in window:
+            palette = 'Greens_r'
+            title_color = 'darkgreen'
+        else:
+            palette = 'Blues_r'
+            title_color = 'darkblue'
 
-    # texts = []
-    # top_features = plot_df.nlargest(15, 'Dominance_Score')
-    # for _, row in top_features.iterrows():
-    #     t = plt.text(row['X_plot'], row['Y_plot'], row['Display_Name'],
-    #                  fontsize=16, fontweight='semibold',
-    #                  bbox=dict(boxstyle="round,pad=0.1", fc="white", ec="gray", alpha=0.7), zorder=4)
-    #     texts.append(t)
+        sns.barplot(x='Conditional_Block_Rate', y='Display_Name', data=df_window, ax=ax, palette=palette)
 
-    # texts = []
-    # top_features = plot_df.nlargest(15, 'Dominance_Score')
-    # for _, row in top_features.iterrows():
-    #     t = plt.text(
-    #         row['X_plot']+ 0.1,
-    #         row['Y_plot']+ 0.02,
-    #         row['Display_Name'],
-    #         fontsize=17, color='black',fontweight='semibold',
-    #         bbox=dict(
-    #             boxstyle="round,pad=0.25",
-    #             fc="white",
-    #             ec="black",
-    #             linewidth=0.8,
-    #             alpha=0.7
-    #         ),
-    #         zorder=5
-    #     )
-    #     t.set_path_effects([
-    #         path_effects.Stroke(linewidth=2, foreground='white'),
-    #         path_effects.Normal()
-    #     ])
-    #
-    #     texts.append(t)
+        # ax.set_title(f'Top Drivers of {window}', fontsize=15, fontweight='bold', color=title_color, pad=15)
+        add_labels_to_ax(ax, df_window)
+        ax.set_xlabel('Conditional Blocking Rate', fontsize=16)
+        ax.set_ylabel('')
+        ax.tick_params(axis='both', labelsize=16)
 
 
-    texts = []
-    top_features = plot_df.nlargest(15, 'Dominance_Score')
+        # 基于传入的 base_output_png，动态生成特异性的文件名
+        # 将空格、括号等替换为下划线，以适应不同的操作系统文件路径
+        safe_window_name = window.replace(' ', '_').replace('(', '').replace(')', '').replace('>', 'gt_').replace('-', '_')
+        output_path = base_output_png.replace('.pdf', f'_{safe_window_name}.pdf')
 
-    for _, row in top_features.iterrows():
-        t = plt.text(
-            row['X_plot'],
-            row['Y_plot'],
-            row['Display_Name'],
-            fontsize=20,
-            # fontweight='semibold',
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="gray", alpha=0.9),
-            zorder=6
-        )
-        texts.append(t)
+        plt.tight_layout()
+        plt.savefig(output_path, format="pdf", dpi=300, bbox_inches="tight")
+        plt.show()
+        plt.close()
 
-
-    if HAS_ADJUST_TEXT:
-        adjust_text(
-            texts,
-            x=plot_df['X_plot'],
-            y=plot_df['Y_plot'],
-            arrowprops=dict(
-                arrowstyle='-',
-                color='black',
-                lw=1.0,
-                alpha=0.7
-            ),
-            expand_points=(2, 2),
-            expand_text=(1.5, 1.5),
-            force_text=2,
-            force_points=1,
-            lim=300   # 👈 很关键：增加迭代次数
-        )
-
-    cbar = plt.colorbar(scatter, pad=0.01, fraction=0.05)
-    cbar.set_label('Conflict Dominance Score', rotation=90, labelpad=10, fontsize=20)
-    cbar.ax.tick_params(labelsize=20)
-    # plt.title('Win Rate vs Total Conflict Battles', fontsize=16, fontweight='bold', pad=20)
-    plt.xlabel('Frequency of Involvement in Prognostic Conflicts', fontsize=20)
-    plt.ylabel('Conflict Win Rate', fontsize=20)
-    plt.axhline(y=0.5, color='gray', linestyle='--', alpha=0.5)
-    plt.grid(False)
-    plt.yticks(fontsize=20)
-    plt.xticks(fontsize=20)
-    # plt.figtext(0.99, 0.01, '* Note: Overlapping features are dispersed to reveal data density.',
-    #             ha='right', fontsize=9, color='dimgray', style='italic')
-    plt.tight_layout(rect=[0, 0.03, 1, 1])
-    # plt.tight_layout()
-    plt.savefig(output_name, format="pdf", dpi=300, bbox_inches="tight")
-    plt.show()
-    plt.close()
-
-def plot_dominance_wordcloud(df, output_name):
-    if df.empty or 'Dominance_Score' not in df.columns: return
-    plot_df = df[df['Dominance_Score'] > 0].copy()
-    if plot_df.empty: return
-
-    plot_df['Display_Name'] = plot_df['Atomic_Feature_Name'].str.replace('_', ' ')
-    word_freq_dict = dict(zip(plot_df['Display_Name'], plot_df['Dominance_Score']))
-    if not word_freq_dict: return
-
-    wordcloud = WordCloud(
-        width=1600, height=1000, background_color='white', colormap='inferno',
-        max_words=40, contour_width=0, prefer_horizontal=0.85
-    ).generate_from_frequencies(word_freq_dict)
-
-    plt.figure(figsize=(16, 10))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    # plt.title('Word Cloud of Features by Conflict Dominance Score', fontsize=20, fontweight='bold', pad=20)
-    plt.tight_layout()
-    plt.yticks(fontsize=16)
-    plt.xticks(fontsize=16)
-    plt.savefig(output_name, format="pdf", dpi=300, bbox_inches="tight")
-    plt.show()
-    plt.close()
+        print(f"成功: 独立图表已保存至 {output_path}")
 
 # ==========================================
-# 辅助函数：从文件路径提取 patient_sn
-# ==========================================
-def get_patient_sn_from_path(filepath):
-    base_name = os.path.basename(filepath)
-    return base_name.replace("_output.txt", "").replace(".txt", "")
-
-# ==========================================
-# 主程序：时间队列划分与批量执行
+# 主程序
 # ==========================================
 if __name__ == "__main__":
-    print(f"加载标签数据: {CSV_PATH}")
-    time_file = pd.read_csv(CSV_PATH)
-    # 确保 sn 被当作字符串匹配
-    time_file['patient_sn'] = time_file['patient_sn'].astype(str)
-
     files = glob.glob(os.path.join(DATA_DIR, "*.txt"))
     if not files:
-        print(f"错误：未在 {DATA_DIR} 找到测试文件！")
-        exit()
+        print("未找到测试文件，请检查路径。")
+    else:
+        CSV_OUTPUT = os.path.join(OUTPUT_BASE_DIR, "method3_blocking_merged.csv")
+        # 这是基础图表名，实际产出的图表会被自动加上后缀 (如 _Early_Recurrence_0_24m.pdf)
+        PNG_OUTPUT_BASE = os.path.join(OUTPUT_BASE_DIR, "Fig3_Temporal_Analysis_Atomic.pdf")
 
-    print(f"发现 {len(files)} 个测试文件，开始进行时间分层的人群划分...")
-    sn_to_path = {get_patient_sn_from_path(path): path for path in files}
+        # 1. 运行数据合并提取（全集处理，不需要切分人群）
+        df_m3_merged = method_3_conditional_blocking_merged(files)
+        print("=== 方法三：统一原子特征的时间窗阻断率榜单 ===")
+        print(df_m3_merged.to_string(index=False))
+        df_m3_merged.to_csv(CSV_OUTPUT, index=False, encoding='utf-8-sig')
 
-    # 按模型预测结果分组
-    cohorts = {
-        "Pred_6m_HighRisk": time_file[time_file['p_0_6'] == 1]['patient_sn'].tolist(),
-        "Pred_6m_LowRisk": time_file[time_file['p_0_6'] == 0]['patient_sn'].tolist(),
-        "Pred_24m_HighRisk": time_file[time_file['p_0_24'] == 1]['patient_sn'].tolist(),
-        "Pred_24m_LowRisk": time_file[time_file['p_0_24'] == 0]['patient_sn'].tolist(),
-        "Pred_24_60m_HighRisk": time_file[time_file['p_24_60'] == 1]['patient_sn'].tolist(),
-        "Pred_24_60m_LowRisk": time_file[time_file['p_24_60'] == 0]['patient_sn'].tolist()
-    }
-
-    # 遍历处理各个预测分组
-    for cohort_name, sn_list in cohorts.items():
-        cohort_files = [sn_to_path[sn] for sn in sn_list if sn in sn_to_path]
-        print(f"\n=========================================")
-        print(f"开始处理分组: [{cohort_name}], 共匹配样本: {len(cohort_files)}")
-
-        if not cohort_files:
-            print(f"警告：该分组无可用文件，跳过。")
-            continue
-
-        # 第一步：获取全局聚合数据 (提供 Global Importance)
-        df_m1 = method_1_semantic_weight_scoring(cohort_files)
-        df_agg = aggregate_by_atomic_feature_name(df_m1)
-
-        # 第二步：计算博弈胜率并合成统治力指数
-        df_m2_combined = method_2_core_conflict_win_rate(cohort_files, df_agg=df_agg)
-
-        if df_m2_combined.empty:
-            print(f"警告：该分组未能提取到有效博弈数据，跳过保存与绘图。")
-            continue
-
-        # 动态生成输出路径
-        out_csv = os.path.join(OUTPUT_BASE_DIR, f"{cohort_name}_conflict_win_analysis.csv")
-        out_bar = os.path.join(OUTPUT_BASE_DIR, f"{cohort_name}_conflict_win_dominance_score.pdf")
-        out_scatter = os.path.join(OUTPUT_BASE_DIR, f"{cohort_name}_conflict_win_battles_scatter.pdf")
-        out_wc = os.path.join(OUTPUT_BASE_DIR, f"{cohort_name}_conflict_win_dominance_wordcloud.pdf")
-
-        # 打印 Top 数据供即时查看
-        display_cols = ["Atomic_Feature_Name", "Dominance_Score", "Win_Rate", "Total_Battles"]
-        print(df_m2_combined[display_cols].head(10).to_string(index=False))
-
-        # 保存结果
-        df_m2_combined.to_csv(out_csv, index=False, encoding='utf-8-sig')
-
-        plot_dominance_score(df_m2_combined, out_bar)
-        plot_win_rate_vs_battles_bubble(df_m2_combined, out_scatter)
-        plot_dominance_wordcloud(df_m2_combined, out_wc)
-
-        print(f"[{cohort_name}] 处理完毕。数据已存入: {OUTPUT_BASE_DIR}")
+        # 2. 执行独立图片渲染
+        if not df_m3_merged.empty:
+            print("\n正在为每个时间窗独立生成阻断率条形图...")
+            plot_method3_bar_charts(CSV_OUTPUT, PNG_OUTPUT_BASE)

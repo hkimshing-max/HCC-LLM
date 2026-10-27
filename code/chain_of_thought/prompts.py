@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2026/1/30 14:26
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : cot_prompt.py
+# @File : prompts.py
 # @Software : PyCharm
 
 COT_PROMPT = '''

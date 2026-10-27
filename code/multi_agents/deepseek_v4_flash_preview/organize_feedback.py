@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2026/1/4 14:43
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : self_refine_result_organize.py
+# @File : organize_feedback.py
 # @Software : PyCharm
 
 import pandas as pd

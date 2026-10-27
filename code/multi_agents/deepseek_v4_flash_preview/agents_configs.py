@@ -1,5 +1,4 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2025/12/30 10:18
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
 # @File : agents_configs.py

@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2025/12/30 10:20
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : performance_evaluate.py
+# @File : evaluate.py
 # @Software : PyCharm
 
 import os

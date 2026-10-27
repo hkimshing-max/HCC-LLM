@@ -1,17 +1,15 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2026/1/30 16:18
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : cot_performance_evaluate.py
+# @File : evaluate.py
 # @Software : PyCharm
-
 
 import os
 import pandas as pd
 from typing import List, Dict, Any
 import json
 import re
-from utils import evaluate_binary_classification, normalize_final_decision_node, extract_patient_info_and_prediction_text_cot
+from utils import extract_patient_info_and_prediction_text,evaluate_binary_classification, normalize_final_decision_node
 import numpy as np
 from sklearn.metrics import (confusion_matrix, accuracy_score, precision_score,recall_score, f1_score, classification_report, roc_auc_score)
 from lifelines.utils import concordance_index
@@ -25,7 +23,7 @@ def extract_patient_info(file_path: str):
     results: List[Dict[str, Any]] = []
     for i, fp in enumerate(txt_files, 1):
         try:
-            info = extract_patient_info_and_prediction_text_cot(fp)
+            info = extract_patient_info_and_prediction_text(fp)
             results.append(info)
         except Exception as e:
             print(f"   × 失败: {e}")
@@ -156,16 +154,39 @@ def convert_numpy(obj):
     raise TypeError
 
 
-def test_main():
+def train_main():
+
 # Configure input/output locations using the HCC_* environment variables.
-# Configure input/output locations using the HCC_* environment variables.
-    result_folder_path = os.environ.get('HCC_RESULT_DIR', 'outputs/model_outputs')
+    # train_result_path
+    result_folder_path = os.environ.get('HCC_RESULT_DIR', 'outputs/development_outputs')
     mac_result = extract_patient_info(result_folder_path)
+    pfs_info_path = os.environ.get('HCC_GROUND_TRUTH', 'data/development_outcomes.csv')
+    ground_truth_df = merge_with_ground_truth(mac_result, pfs_info_path)
+    ground_truth_output_path = result_folder_path + "/ground_truth_with_predictions.csv"
+    ground_truth_df.to_csv(ground_truth_output_path,index=False, encoding='utf-8-sig')
+    print("解析完成，已保存至：", ground_truth_output_path)
+    performance_results = evaluate_performance(ground_truth_df, threshold=0.5)
+    print("性能评估结果：")
+    print(json.dumps(performance_results, indent=4, ensure_ascii=False))
+    performance_results_path = result_folder_path + "/performance_results.json"
+    with open(performance_results_path, "w") as f:
+        json.dump(performance_results, f, indent=4, default=convert_numpy)
+
+def test_main():
+
+    result_folder_path = os.environ.get('HCC_RESULT_DIR', 'outputs/model_outputs')
+# Configure input/output locations using the HCC_* environment variables.
+# Configure input/output locations using the HCC_* environment variables.
+    mac_result = extract_patient_info(result_folder_path)
+# Configure input/output locations using the HCC_* environment variables.
     pfs_info_path = os.environ.get('HCC_GROUND_TRUTH', 'data/outcomes.csv')
     ground_truth_df = merge_with_ground_truth(mac_result, pfs_info_path)
     ground_truth_output_path = result_folder_path + "/ground_truth_with_predictions.csv"
     ground_truth_df.to_csv(ground_truth_output_path,index=False, encoding='utf-8-sig')
     print("解析完成，已保存至：", ground_truth_output_path)
+
+    print(ground_truth_df["Target_0_to_60m"].value_counts(), ground_truth_df["p_0_60"].value_counts(),ground_truth_df["final_decision_node"].value_counts())
+
     performance_results = evaluate_performance(ground_truth_df, threshold=0.5)
     performance_results_path = result_folder_path + "/performance_results.json"
     with open(performance_results_path, "w") as f:
@@ -178,5 +199,8 @@ def test_main():
 
 if __name__ == '__main__':
 
+    # train_main()
 
     test_main()
+
+

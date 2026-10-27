@@ -50,6 +50,6 @@ transcripts directly. These identifiers are linkage keys and should remain local
 ## Performance plotting
 
 The Excel plotting scripts expect aggregate performance summaries rather than
-patient records. `model_test_results_present_with_dsv4.py` includes V4 and fills
+patient records. `plot_performance.py` includes V4 and fills
 down the workbook's `Time window` column before plotting. Inspect its column
 references when preparing a compatible aggregate workbook.

@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2026/1/30 14:17
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : deepSeek_v32_run_cot.py
+# @File : run_deepseek_r1_distill_qwen_7b.py
 # @Software : PyCharm
 # --*-- coding:utf-8 --*--
 import asyncio
@@ -10,7 +9,7 @@ import os
 import json
 import pandas as pd
 from openai import AsyncOpenAI
-from cot_prompt import COT_PROMPT
+from prompts import COT_PROMPT
 from utils import save_messages_to_txt, load_patient_data, split_patient_json
 
 # 配置 API
@@ -53,13 +52,13 @@ async def main(split_data, file_name, OUTPUT_DIR, client):
 
     try:
         response = await client.chat.completions.create(
-            model="Qwen/Qwen3-8B",
+            model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
             messages=[
                 {"role": "system", "content": COT_PROMPT},
                 {"role": "user", "content": task_input}
             ],
             response_format={"type": "json_object"},
-            temperature=0.1
+            temperature=0
         )
 
         content = response.choices[0].message.content
@@ -120,6 +119,6 @@ if __name__ == "__main__":
     # OUTPUT_DIR = os.path.join(DATA_DIR, 'cot_test_result_direct')
 
     DATA_DIR = os.environ.get('HCC_DATA_DIR', 'data/test_json')
-    OUTPUT_DIR = os.environ.get('HCC_OUTPUT_DIR', os.path.join(DATA_DIR, 'cot_test_Qwen3-8B-1'))
+    OUTPUT_DIR = os.environ.get('HCC_OUTPUT_DIR', os.path.join(DATA_DIR, 'cot_test_DeepSeek-R1-Distill-Qwen-7B-1'))
 
     asyncio.run(run_all_patients(DATA_DIR, OUTPUT_DIR, max_concurrent=10))

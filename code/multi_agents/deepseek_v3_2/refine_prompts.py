@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2025/12/30 15:28
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : train_and_self_refine.py
+# @File : refine_prompts.py
 # @Software : PyCharm
 
 import asyncio

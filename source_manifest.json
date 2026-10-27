@@ -1,11 +1,16 @@
 {
+  "schema_version": 2,
+  "status": "publication_source_snapshot",
+  "base_repository_commit": "71b401d8ed90639707a8bfc0e1bab343e50e8b32",
   "source_snapshot": "Author-provided hcc_codes archive and later V4 performance-plot script",
   "files": [
     {
-      "path": "code/chain_of_thought/cot_performance_evaluate.py",
-      "source_sha256": "55c87ee2afbaea0a6ba384aa42302af3d5768c08c5d859f844c7d1626e954574",
-      "publication_sha256": "dc89325cda5d6fb9cd767addee126d7dda74b1cca60cf856a6656e7bdfa60a70",
-      "changes": [
+      "path": "code/chain_of_thought/evaluate.py",
+      "published_path": "code/chain_of_thought/cot_performance_evaluate.py",
+      "original_source_sha256": "55c87ee2afbaea0a6ba384aa42302af3d5768c08c5d859f844c7d1626e954574",
+      "published_snapshot_sha256": "dc89325cda5d6fb9cd767addee126d7dda74b1cca60cf856a6656e7bdfa60a70",
+      "review_sha256": "3c546dc985be677627b3d0575abdd773685bf5f21de2b6f47d9951c8e4e4e3c2",
+      "prior_packaging_changes": [
         {
           "line": 162,
           "variable": "result_folder_path",
@@ -18,19 +23,38 @@
           "environment_variable": "HCC_GROUND_TRUTH",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "3c546dc985be677627b3d0575abdd773685bf5f21de2b6f47d9951c8e4e4e3c2",
+      "publication_sha256": "3c546dc985be677627b3d0575abdd773685bf5f21de2b6f47d9951c8e4e4e3c2"
     },
     {
-      "path": "code/chain_of_thought/cot_prompt.py",
-      "source_sha256": "4aa726086931bc1c9dccf70ced596526d71cbdcfabfd000e6e3f174cfce48aaa",
-      "publication_sha256": "e9f3517230fbb863cb066afd4dfe79028eafe57f93f8733a018e993c96faaef3",
-      "changes": []
+      "path": "code/chain_of_thought/prompts.py",
+      "published_path": "code/chain_of_thought/cot_prompt.py",
+      "original_source_sha256": "4aa726086931bc1c9dccf70ced596526d71cbdcfabfd000e6e3f174cfce48aaa",
+      "published_snapshot_sha256": "e9f3517230fbb863cb066afd4dfe79028eafe57f93f8733a018e993c96faaef3",
+      "review_sha256": "0d4d30ee06f90ac230b7ef124732be9db685049ddbab70bb68cbfa8fd970114e",
+      "prior_packaging_changes": [],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "0d4d30ee06f90ac230b7ef124732be9db685049ddbab70bb68cbfa8fd970114e",
+      "publication_sha256": "0d4d30ee06f90ac230b7ef124732be9db685049ddbab70bb68cbfa8fd970114e"
     },
     {
-      "path": "code/chain_of_thought/deepSeek-R1-Distill-Qwen-7B_run_cot.py",
-      "source_sha256": "b86c285c357b9190b1058d314c002707fca794ea259921a915dbc3f1995bd19d",
-      "publication_sha256": "984e458e0fb2b8501e981b4691c2aa8bfa995c5fc3518c419641fdfbaba78243",
-      "changes": [
+      "path": "code/chain_of_thought/run_deepseek_r1_distill_qwen_7b.py",
+      "published_path": "code/chain_of_thought/deepSeek-R1-Distill-Qwen-7B_run_cot.py",
+      "original_source_sha256": "b86c285c357b9190b1058d314c002707fca794ea259921a915dbc3f1995bd19d",
+      "published_snapshot_sha256": "984e458e0fb2b8501e981b4691c2aa8bfa995c5fc3518c419641fdfbaba78243",
+      "prior_packaging_changes": [
         {
           "line": 17,
           "variable": "API_KEY",
@@ -49,13 +73,24 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 1
+      },
+      "previous_review_sha256": "5818977a4e71459c6bfc5acde1d6e8935767b3f88287523fa21c22faaf05b5a6",
+      "confirmed_sha256": "eafddce44064e35e32e6d1735ec52e5d93e16dd30ff709bea1e9a5e8179cecb2",
+      "author_returned_sha256": "eafddce44064e35e32e6d1735ec52e5d93e16dd30ff709bea1e9a5e8179cecb2",
+      "confirmed_change": "temperature 0.1 -> 0, as returned by code provider",
+      "publication_sha256": "eafddce44064e35e32e6d1735ec52e5d93e16dd30ff709bea1e9a5e8179cecb2"
     },
     {
-      "path": "code/chain_of_thought/deepSeek_v32_run_cot.py",
-      "source_sha256": "806b8628638f9fb5fb7c31af7d01a80ca42edc94a4fc96edcf1487bbcf4c515e",
-      "publication_sha256": "d30d2ac91c0b2c7984fa283f9d930a79ff2f83b5a47ab20423aa6f8728656842",
-      "changes": [
+      "path": "code/chain_of_thought/run_deepseek_v3_2.py",
+      "published_path": "code/chain_of_thought/deepSeek_v32_run_cot.py",
+      "original_source_sha256": "806b8628638f9fb5fb7c31af7d01a80ca42edc94a4fc96edcf1487bbcf4c515e",
+      "published_snapshot_sha256": "d30d2ac91c0b2c7984fa283f9d930a79ff2f83b5a47ab20423aa6f8728656842",
+      "prior_packaging_changes": [
         {
           "line": 17,
           "variable": "API_KEY",
@@ -74,13 +109,24 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 1
+      },
+      "previous_review_sha256": "b9dba5489807c5730e2e997a4b4c7a5e78942677a65bd209277d254254dcd338",
+      "confirmed_sha256": "b40810a75ac9fb4b2bf7d48886e6c2eba405af542c3e25543f999242616625ce",
+      "author_returned_sha256": "b40810a75ac9fb4b2bf7d48886e6c2eba405af542c3e25543f999242616625ce",
+      "confirmed_change": "temperature 0.1 -> 0, as returned by code provider",
+      "publication_sha256": "b40810a75ac9fb4b2bf7d48886e6c2eba405af542c3e25543f999242616625ce"
     },
     {
-      "path": "code/chain_of_thought/qwen_8B_run_cot.py",
-      "source_sha256": "053e87d282831e339445dbfe67c957ee17dc87563f77945f5621b4fbd87b5d3e",
-      "publication_sha256": "6fe5e64178839ac9af393686d02d3838584d34ac8b0c184576fd6580d6ce23e5",
-      "changes": [
+      "path": "code/chain_of_thought/run_qwen_8b.py",
+      "published_path": "code/chain_of_thought/qwen_8B_run_cot.py",
+      "original_source_sha256": "053e87d282831e339445dbfe67c957ee17dc87563f77945f5621b4fbd87b5d3e",
+      "published_snapshot_sha256": "6fe5e64178839ac9af393686d02d3838584d34ac8b0c184576fd6580d6ce23e5",
+      "prior_packaging_changes": [
         {
           "line": 17,
           "variable": "API_KEY",
@@ -99,19 +145,41 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 1
+      },
+      "previous_review_sha256": "6225ba97a59802b4cdd5223ebf9a23eab2072c4bc6a31ea895f151a88b266917",
+      "confirmed_sha256": "3df6a6b646cbecde2210a8e6d528b627f3a34dbeda064eb0c2223ce6ce451637",
+      "author_returned_sha256": "3df6a6b646cbecde2210a8e6d528b627f3a34dbeda064eb0c2223ce6ce451637",
+      "confirmed_change": "temperature 0.1 -> 0, as returned by code provider",
+      "publication_sha256": "3df6a6b646cbecde2210a8e6d528b627f3a34dbeda064eb0c2223ce6ce451637"
     },
     {
       "path": "code/chain_of_thought/utils.py",
-      "source_sha256": "bf11f375b77d902dd1e106bf7b8620b9e605fb0a013c93c3927ff639f44f2295",
-      "publication_sha256": "8489aa663d72ffba7fb87960bba7e204699cefb6c503cbdf61e104a028ee3eb5",
-      "changes": []
+      "published_path": "code/chain_of_thought/utils.py",
+      "original_source_sha256": "bf11f375b77d902dd1e106bf7b8620b9e605fb0a013c93c3927ff639f44f2295",
+      "published_snapshot_sha256": "8489aa663d72ffba7fb87960bba7e204699cefb6c503cbdf61e104a028ee3eb5",
+      "review_sha256": "cff45ea8eba81a43b3bd1c33a3be1d7c073cb58d0b8dd8a1c203fc7563a25657",
+      "prior_packaging_changes": [],
+      "review_changes": {
+        "renamed": false,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "cff45ea8eba81a43b3bd1c33a3be1d7c073cb58d0b8dd8a1c203fc7563a25657",
+      "publication_sha256": "cff45ea8eba81a43b3bd1c33a3be1d7c073cb58d0b8dd8a1c203fc7563a25657"
     },
     {
-      "path": "code/figs/conflict_win_with_time.py",
-      "source_sha256": "22ae91a1b134508024fe8c5b48f293f1c2b71b4fa015142c2da6034aa9b0e908",
-      "publication_sha256": "4e950199573738b5f8b246574fa64f3be00f2c3018c4f24c3a4678fdd49f9dbe",
-      "changes": [
+      "path": "code/figures/plot_conflicts.py",
+      "published_path": "code/figs/conflict_win_with_time.py",
+      "original_source_sha256": "22ae91a1b134508024fe8c5b48f293f1c2b71b4fa015142c2da6034aa9b0e908",
+      "published_snapshot_sha256": "4e950199573738b5f8b246574fa64f3be00f2c3018c4f24c3a4678fdd49f9dbe",
+      "review_sha256": "a36e36520edd4d8de6e03263a785e6a194e6550bd54a9d4fdcaa13a645a44a91",
+      "prior_packaging_changes": [
         {
           "line": 30,
           "variable": "DATA_DIR",
@@ -130,13 +198,23 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "a36e36520edd4d8de6e03263a785e6a194e6550bd54a9d4fdcaa13a645a44a91",
+      "publication_sha256": "a36e36520edd4d8de6e03263a785e6a194e6550bd54a9d4fdcaa13a645a44a91"
     },
     {
-      "path": "code/figs/model_test_results_present.py",
-      "source_sha256": "d96e86d8cf90436c643bef0a9054bd270ab28b1b28cb918d6eb9a6b13c3d2e35",
-      "publication_sha256": "a6dada0bf0fc2c073a95884057a5983c1dff1a1ce2f3ca4809cbf97abf081ac6",
-      "changes": [
+      "path": "code/figures/plot_performance_basic.py",
+      "published_path": "code/figs/model_test_results_present.py",
+      "original_source_sha256": "d96e86d8cf90436c643bef0a9054bd270ab28b1b28cb918d6eb9a6b13c3d2e35",
+      "published_snapshot_sha256": "a6dada0bf0fc2c073a95884057a5983c1dff1a1ce2f3ca4809cbf97abf081ac6",
+      "review_sha256": "fdbb731cb1edd1f824b67fab42779b15d680fb6f99fae2b0c23a06f3620b63b3",
+      "prior_packaging_changes": [
         {
           "line": 18,
           "variable": "EXCEL_PATH",
@@ -149,13 +227,52 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "fdbb731cb1edd1f824b67fab42779b15d680fb6f99fae2b0c23a06f3620b63b3",
+      "publication_sha256": "fdbb731cb1edd1f824b67fab42779b15d680fb6f99fae2b0c23a06f3620b63b3"
     },
     {
-      "path": "code/figs/node_blocking.py",
-      "source_sha256": "64753d7920cfd1786ac5cabd659e41a10a48c744b29f4af5887e3d956638f9d5",
-      "publication_sha256": "71db84af352adfa4fbb38cf729012f67e96d6b3353eb61dcb3461d7f1fa1f502",
-      "changes": [
+      "path": "code/figures/plot_performance.py",
+      "published_path": "code/figs/model_test_results_present_with_dsv4.py",
+      "original_source_sha256": "b8aa970c7fe92f690d3b6bb400f4809a863163f83d14ceb37b9a6551cc0c60f4",
+      "published_snapshot_sha256": "43ebc865a13802809f35d4fbcdc9c359da3a61a8713a7eaf7f9518c3a14f5716",
+      "review_sha256": "38dae6fcb9b7b274711da2b3a11a7116b2d71b53f2327ad560f4e74a3e764c97",
+      "prior_packaging_changes": [
+        {
+          "line": 18,
+          "variable": "EXCEL_PATH",
+          "environment_variable": "HCC_METRICS_WORKBOOK",
+          "scope": "configuration only"
+        },
+        {
+          "line": 19,
+          "variable": "OUTPUT_DIR",
+          "environment_variable": "HCC_OUTPUT_DIR",
+          "scope": "configuration only"
+        }
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "38dae6fcb9b7b274711da2b3a11a7116b2d71b53f2327ad560f4e74a3e764c97",
+      "publication_sha256": "38dae6fcb9b7b274711da2b3a11a7116b2d71b53f2327ad560f4e74a3e764c97"
+    },
+    {
+      "path": "code/figures/plot_conditional_blocking.py",
+      "published_path": "code/figs/node_blocking.py",
+      "original_source_sha256": "64753d7920cfd1786ac5cabd659e41a10a48c744b29f4af5887e3d956638f9d5",
+      "published_snapshot_sha256": "71db84af352adfa4fbb38cf729012f67e96d6b3353eb61dcb3461d7f1fa1f502",
+      "review_sha256": "d5adba9578b83c7cabe164a02d678ba01cf3a0dccc88afff0f07bd11cd347d57",
+      "prior_packaging_changes": [
         {
           "line": 20,
           "variable": "DATA_DIR",
@@ -168,13 +285,23 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "d5adba9578b83c7cabe164a02d678ba01cf3a0dccc88afff0f07bd11cd347d57",
+      "publication_sha256": "d5adba9578b83c7cabe164a02d678ba01cf3a0dccc88afff0f07bd11cd347d57"
     },
     {
-      "path": "code/figs/weight_score_with_time.py",
-      "source_sha256": "ab0ebc95323797e434ea4bdec4620efa57ff32b3489219cb062073eeafad92bb",
-      "publication_sha256": "a4d48c11a36c559ecddfecabd7f944615c8f777c8ce0b8d77233eca79f9d3117",
-      "changes": [
+      "path": "code/figures/plot_feature_weights.py",
+      "published_path": "code/figs/weight_score_with_time.py",
+      "original_source_sha256": "ab0ebc95323797e434ea4bdec4620efa57ff32b3489219cb062073eeafad92bb",
+      "published_snapshot_sha256": "a4d48c11a36c559ecddfecabd7f944615c8f777c8ce0b8d77233eca79f9d3117",
+      "review_sha256": "2d5fe0066e8daabac0b6b06d299699a4f61935ca109454974a4388f1dbeb1e61",
+      "prior_packaging_changes": [
         {
           "line": 22,
           "variable": "DATA_DIR",
@@ -193,13 +320,23 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "2d5fe0066e8daabac0b6b06d299699a4f61935ca109454974a4388f1dbeb1e61",
+      "publication_sha256": "2d5fe0066e8daabac0b6b06d299699a4f61935ca109454974a4388f1dbeb1e61"
     },
     {
-      "path": "code/multi_agents/deepseek_r1_distill_qwen_7B_hcc_agents.py",
-      "source_sha256": "50d3ef47786b1530f111e1b25d7d5cdd0f9bbaa35a319c805bd7b0566c28eb2a",
-      "publication_sha256": "beaf94427d1b01a0aad6ee54371c6f28fa18f2da779698d18cbc695ed23a024e",
-      "changes": [
+      "path": "code/multi_agents/run_deepseek_r1_distill_qwen_7b.py",
+      "published_path": "code/multi_agents/deepseek_r1_distill_qwen_7B_hcc_agents.py",
+      "original_source_sha256": "50d3ef47786b1530f111e1b25d7d5cdd0f9bbaa35a319c805bd7b0566c28eb2a",
+      "published_snapshot_sha256": "beaf94427d1b01a0aad6ee54371c6f28fa18f2da779698d18cbc695ed23a024e",
+      "review_sha256": "4f39cebff815c92d2eeb759ea5fd488440e1d71fa4fc21745af2300bd665cbf5",
+      "prior_packaging_changes": [
         {
           "line": 24,
           "variable": "API_KEY",
@@ -218,19 +355,39 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "4f39cebff815c92d2eeb759ea5fd488440e1d71fa4fc21745af2300bd665cbf5",
+      "publication_sha256": "4f39cebff815c92d2eeb759ea5fd488440e1d71fa4fc21745af2300bd665cbf5"
     },
     {
       "path": "code/multi_agents/deepseek_v3_2/agents_configs.py",
-      "source_sha256": "dadb3c5a7dbb9822ca190f464031b93be61a61f9e79c592104e7af7d962d5f71",
-      "publication_sha256": "b2bfb327fe5f56fdc9200918d9f32ca30b12c419ead9cfba5c4edb14374d0dd9",
-      "changes": []
+      "published_path": "code/multi_agents/deepseek_v3_2/agents_configs.py",
+      "original_source_sha256": "dadb3c5a7dbb9822ca190f464031b93be61a61f9e79c592104e7af7d962d5f71",
+      "published_snapshot_sha256": "b2bfb327fe5f56fdc9200918d9f32ca30b12c419ead9cfba5c4edb14374d0dd9",
+      "review_sha256": "41a56a9f07ef7a37a853468b4272289148e3a82a5faa5695c37e50a38fabe2d7",
+      "prior_packaging_changes": [],
+      "review_changes": {
+        "renamed": false,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "41a56a9f07ef7a37a853468b4272289148e3a82a5faa5695c37e50a38fabe2d7",
+      "publication_sha256": "41a56a9f07ef7a37a853468b4272289148e3a82a5faa5695c37e50a38fabe2d7"
     },
     {
-      "path": "code/multi_agents/deepseek_v3_2/performance_evaluate.py",
-      "source_sha256": "82798799ce62de4377c7f8020623a4eb65ba75cbf0ecce76d5386d02700ef505",
-      "publication_sha256": "5cbb74861639afbc0efb5c3c334ece79eb3bdd9c0b290cb169781eca3b9501a2",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v3_2/evaluate.py",
+      "published_path": "code/multi_agents/deepseek_v3_2/performance_evaluate.py",
+      "original_source_sha256": "82798799ce62de4377c7f8020623a4eb65ba75cbf0ecce76d5386d02700ef505",
+      "published_snapshot_sha256": "5cbb74861639afbc0efb5c3c334ece79eb3bdd9c0b290cb169781eca3b9501a2",
+      "review_sha256": "17579ac1deac851dcc27a6780b4c164ff224ffe387f36e09a71a773825b520a7",
+      "prior_packaging_changes": [
         {
           "line": 167,
           "variable": "result_folder_path",
@@ -255,13 +412,23 @@
           "environment_variable": "HCC_GROUND_TRUTH",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "17579ac1deac851dcc27a6780b4c164ff224ffe387f36e09a71a773825b520a7",
+      "publication_sha256": "17579ac1deac851dcc27a6780b4c164ff224ffe387f36e09a71a773825b520a7"
     },
     {
-      "path": "code/multi_agents/deepseek_v3_2/run_hcc_agents_deepseek.py",
-      "source_sha256": "d068558b62178b147f6f608297712ee9a83345ccab893ae916e67ebe90e86276",
-      "publication_sha256": "4605da264de727e7debc2c691daf4bfb90a3fdd2a801ad6be924dc8960bb7a94",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v3_2/run_inference.py",
+      "published_path": "code/multi_agents/deepseek_v3_2/run_hcc_agents_deepseek.py",
+      "original_source_sha256": "d068558b62178b147f6f608297712ee9a83345ccab893ae916e67ebe90e86276",
+      "published_snapshot_sha256": "4605da264de727e7debc2c691daf4bfb90a3fdd2a801ad6be924dc8960bb7a94",
+      "review_sha256": "73b24918997706c53f6e34e04965595c5f54184d6182f5e71eff927d83097c29",
+      "prior_packaging_changes": [
         {
           "line": 24,
           "variable": "API_KEY",
@@ -280,13 +447,23 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "73b24918997706c53f6e34e04965595c5f54184d6182f5e71eff927d83097c29",
+      "publication_sha256": "73b24918997706c53f6e34e04965595c5f54184d6182f5e71eff927d83097c29"
     },
     {
-      "path": "code/multi_agents/deepseek_v3_2/train_and_self_refine.py",
-      "source_sha256": "2551f91c80c425204ca603a0c9d361f997b7402002b92a331a366867bfddac25",
-      "publication_sha256": "e9bc46cc262004076c85c550a581126ee51a50413d996e1c691e10e45644a458",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v3_2/refine_prompts.py",
+      "published_path": "code/multi_agents/deepseek_v3_2/train_and_self_refine.py",
+      "original_source_sha256": "2551f91c80c425204ca603a0c9d361f997b7402002b92a331a366867bfddac25",
+      "published_snapshot_sha256": "e9bc46cc262004076c85c550a581126ee51a50413d996e1c691e10e45644a458",
+      "review_sha256": "39fda95e3169f32e49d9f76b32de82570e9924d8deee63fe2b74bad63402cb15",
+      "prior_packaging_changes": [
         {
           "line": 25,
           "variable": "API_KEY",
@@ -305,25 +482,55 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "39fda95e3169f32e49d9f76b32de82570e9924d8deee63fe2b74bad63402cb15",
+      "publication_sha256": "39fda95e3169f32e49d9f76b32de82570e9924d8deee63fe2b74bad63402cb15"
     },
     {
       "path": "code/multi_agents/deepseek_v3_2/utils.py",
-      "source_sha256": "0062781529295a64e42ca20b223e1f9c6f501155445c4e68b7d1ac09c7de9c32",
-      "publication_sha256": "c7aef4d74b2428eae85f956d4dcd0adab13ddcb9ff5bcff8cf8e8c339999a180",
-      "changes": []
+      "published_path": "code/multi_agents/deepseek_v3_2/utils.py",
+      "original_source_sha256": "0062781529295a64e42ca20b223e1f9c6f501155445c4e68b7d1ac09c7de9c32",
+      "published_snapshot_sha256": "c7aef4d74b2428eae85f956d4dcd0adab13ddcb9ff5bcff8cf8e8c339999a180",
+      "review_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d",
+      "prior_packaging_changes": [],
+      "review_changes": {
+        "renamed": false,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d",
+      "publication_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d"
     },
     {
       "path": "code/multi_agents/deepseek_v4_flash_preview/agents_configs.py",
-      "source_sha256": "02c19d8fd08e27b43fb97f7b140de98c20e142c7498926c5ea843800f950835a",
-      "publication_sha256": "bd71e41eb0898f439092a4b8a157a11a561e77c9e3009d811c3b8d7c9b774c32",
-      "changes": []
+      "published_path": "code/multi_agents/deepseek_v4_flash_preview/agents_configs.py",
+      "original_source_sha256": "02c19d8fd08e27b43fb97f7b140de98c20e142c7498926c5ea843800f950835a",
+      "published_snapshot_sha256": "bd71e41eb0898f439092a4b8a157a11a561e77c9e3009d811c3b8d7c9b774c32",
+      "review_sha256": "a11f2cb7f6864cf9964eada39b80f89d41aa0b21f8a60229fdf7a3a8eb2b77d1",
+      "prior_packaging_changes": [],
+      "review_changes": {
+        "renamed": false,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "a11f2cb7f6864cf9964eada39b80f89d41aa0b21f8a60229fdf7a3a8eb2b77d1",
+      "publication_sha256": "a11f2cb7f6864cf9964eada39b80f89d41aa0b21f8a60229fdf7a3a8eb2b77d1"
     },
     {
-      "path": "code/multi_agents/deepseek_v4_flash_preview/performance_evaluate.py",
-      "source_sha256": "f5d28d1ec7ad4d4ceeeaed20025bc2cee508443f19c5321e35149c84f97070b7",
-      "publication_sha256": "48c312ed19c833adc8e225b7522d806214412ef94d41229a132d3a83d88e366d",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v4_flash_preview/evaluate.py",
+      "published_path": "code/multi_agents/deepseek_v4_flash_preview/performance_evaluate.py",
+      "original_source_sha256": "f5d28d1ec7ad4d4ceeeaed20025bc2cee508443f19c5321e35149c84f97070b7",
+      "published_snapshot_sha256": "48c312ed19c833adc8e225b7522d806214412ef94d41229a132d3a83d88e366d",
+      "review_sha256": "e3baa114207d702abd71ce99d62d7def11a602766d1055c0259a9c77e7b11075",
+      "prior_packaging_changes": [
         {
           "line": 162,
           "variable": "result_folder_path",
@@ -348,13 +555,23 @@
           "environment_variable": "HCC_GROUND_TRUTH",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "e3baa114207d702abd71ce99d62d7def11a602766d1055c0259a9c77e7b11075",
+      "publication_sha256": "e3baa114207d702abd71ce99d62d7def11a602766d1055c0259a9c77e7b11075"
     },
     {
-      "path": "code/multi_agents/deepseek_v4_flash_preview/run_hcc_agents_deepseek_v4.py",
-      "source_sha256": "cc53edf3ce7bcdff307c6a719161cc448bbee67a75c46923828ab25c11345b56",
-      "publication_sha256": "177c3150a3e8358a35e90d5c94b973cf83b7519624dab226c1fdbed597cf9d25",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v4_flash_preview/run_inference.py",
+      "published_path": "code/multi_agents/deepseek_v4_flash_preview/run_hcc_agents_deepseek_v4.py",
+      "original_source_sha256": "cc53edf3ce7bcdff307c6a719161cc448bbee67a75c46923828ab25c11345b56",
+      "published_snapshot_sha256": "177c3150a3e8358a35e90d5c94b973cf83b7519624dab226c1fdbed597cf9d25",
+      "review_sha256": "ba321917926e19baa907914f4bc3c00a4f6fc65b2a3daa8baf36a2bec65b459a",
+      "prior_packaging_changes": [
         {
           "line": 197,
           "variable": "DATA_DIR",
@@ -373,26 +590,46 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "ba321917926e19baa907914f4bc3c00a4f6fc65b2a3daa8baf36a2bec65b459a",
+      "publication_sha256": "ba321917926e19baa907914f4bc3c00a4f6fc65b2a3daa8baf36a2bec65b459a"
     },
     {
-      "path": "code/multi_agents/deepseek_v4_flash_preview/self_refine_result_organize.py",
-      "source_sha256": "79a3733d8cb5e5bf3107bd039fadfc76c503ba4412b16450e8ca0d7bf61991ef",
-      "publication_sha256": "3b320a52f1beb2f5229a686d039af43a945cbe39d4551fe47ad1315f9b18be5b",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v4_flash_preview/organize_feedback.py",
+      "published_path": "code/multi_agents/deepseek_v4_flash_preview/self_refine_result_organize.py",
+      "original_source_sha256": "79a3733d8cb5e5bf3107bd039fadfc76c503ba4412b16450e8ca0d7bf61991ef",
+      "published_snapshot_sha256": "3b320a52f1beb2f5229a686d039af43a945cbe39d4551fe47ad1315f9b18be5b",
+      "review_sha256": "e9cd6db417519908fea2e29ac87beaad605dfdce341c9d4d2f56533cddb30147",
+      "prior_packaging_changes": [
         {
           "line": 41,
           "variable": "file_path",
           "environment_variable": "HCC_RESULT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "e9cd6db417519908fea2e29ac87beaad605dfdce341c9d4d2f56533cddb30147",
+      "publication_sha256": "e9cd6db417519908fea2e29ac87beaad605dfdce341c9d4d2f56533cddb30147"
     },
     {
-      "path": "code/multi_agents/deepseek_v4_flash_preview/train_and_self_refine.py",
-      "source_sha256": "a823426031ffd287851307a44b7e1bdd7f97ed8135fe95566e265cfc3e12ba26",
-      "publication_sha256": "ca07f071980d303b775750ed74ac2de23f3b10fa5fb49bb6f6addc5466362c36",
-      "changes": [
+      "path": "code/multi_agents/deepseek_v4_flash_preview/refine_prompts.py",
+      "published_path": "code/multi_agents/deepseek_v4_flash_preview/train_and_self_refine.py",
+      "original_source_sha256": "a823426031ffd287851307a44b7e1bdd7f97ed8135fe95566e265cfc3e12ba26",
+      "published_snapshot_sha256": "ca07f071980d303b775750ed74ac2de23f3b10fa5fb49bb6f6addc5466362c36",
+      "review_sha256": "e8e87f72a75dee4ad0eeccd20c4d79fe1ca265e8c686faa0ff7a3673e9513e49",
+      "prior_packaging_changes": [
         {
           "line": 264,
           "variable": "DATA_DIR",
@@ -411,19 +648,39 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "e8e87f72a75dee4ad0eeccd20c4d79fe1ca265e8c686faa0ff7a3673e9513e49",
+      "publication_sha256": "e8e87f72a75dee4ad0eeccd20c4d79fe1ca265e8c686faa0ff7a3673e9513e49"
     },
     {
       "path": "code/multi_agents/deepseek_v4_flash_preview/utils.py",
-      "source_sha256": "0062781529295a64e42ca20b223e1f9c6f501155445c4e68b7d1ac09c7de9c32",
-      "publication_sha256": "c7aef4d74b2428eae85f956d4dcd0adab13ddcb9ff5bcff8cf8e8c339999a180",
-      "changes": []
+      "published_path": "code/multi_agents/deepseek_v4_flash_preview/utils.py",
+      "original_source_sha256": "0062781529295a64e42ca20b223e1f9c6f501155445c4e68b7d1ac09c7de9c32",
+      "published_snapshot_sha256": "c7aef4d74b2428eae85f956d4dcd0adab13ddcb9ff5bcff8cf8e8c339999a180",
+      "review_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d",
+      "prior_packaging_changes": [],
+      "review_changes": {
+        "renamed": false,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d",
+      "publication_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d"
     },
     {
-      "path": "code/multi_agents/qwen_8B_hcc_agents.py",
-      "source_sha256": "08f3a434105d4cc4de8c3066d42f862cd7940008fc70a06d293eacf7454a9da5",
-      "publication_sha256": "249f0a258a14e377754768e55b28038aa2931a54dda96fd9ccb9804d6f753153",
-      "changes": [
+      "path": "code/multi_agents/run_qwen_8b.py",
+      "published_path": "code/multi_agents/qwen_8B_hcc_agents.py",
+      "original_source_sha256": "08f3a434105d4cc4de8c3066d42f862cd7940008fc70a06d293eacf7454a9da5",
+      "published_snapshot_sha256": "249f0a258a14e377754768e55b28038aa2931a54dda96fd9ccb9804d6f753153",
+      "review_sha256": "2e2c23e86f527a5f1df7a497ba5451c33eb238775d43496bcdbaaa4639a6d8a4",
+      "prior_packaging_changes": [
         {
           "line": 24,
           "variable": "API_KEY",
@@ -442,30 +699,44 @@
           "environment_variable": "HCC_OUTPUT_DIR",
           "scope": "configuration only"
         }
-      ]
+      ],
+      "review_changes": {
+        "renamed": true,
+        "header_time_lines_removed": 1,
+        "prompt_imports_updated": 0
+      },
+      "scientific_logic_preserved": true,
+      "confirmed_sha256": "2e2c23e86f527a5f1df7a497ba5451c33eb238775d43496bcdbaaa4639a6d8a4",
+      "publication_sha256": "2e2c23e86f527a5f1df7a497ba5451c33eb238775d43496bcdbaaa4639a6d8a4"
     },
     {
-      "path": "code/figs/model_test_results_present_with_dsv4.py",
-      "source_sha256": "b8aa970c7fe92f690d3b6bb400f4809a863163f83d14ceb37b9a6551cc0c60f4",
-      "publication_sha256": "43ebc865a13802809f35d4fbcdc9c359da3a61a8713a7eaf7f9518c3a14f5716",
-      "changes": [
-        {
-          "line": 18,
-          "variable": "EXCEL_PATH",
-          "environment_variable": "HCC_METRICS_WORKBOOK",
-          "scope": "configuration only"
-        },
-        {
-          "line": 19,
-          "variable": "OUTPUT_DIR",
-          "environment_variable": "HCC_OUTPUT_DIR",
-          "scope": "configuration only"
-        }
-      ]
+      "path": "code/multi_agents/utils.py",
+      "derived_from": "code/multi_agents/deepseek_v3_2/utils.py",
+      "confirmed_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d",
+      "content_identical_to_V3_2": true,
+      "author_confirmation": "Shared V3.2 companions confirmed by code provider through author.",
+      "publication_sha256": "2c7fafcb206fe5b7350e0009ca07aad21cf58277f5f2de37532ac4e24179f68d"
+    },
+    {
+      "path": "code/multi_agents/agents_configs.py",
+      "derived_from": "code/multi_agents/deepseek_v3_2/agents_configs.py",
+      "confirmed_sha256": "41a56a9f07ef7a37a853468b4272289148e3a82a5faa5695c37e50a38fabe2d7",
+      "content_identical_to_V3_2": true,
+      "author_confirmation": "Shared V3.2 companions confirmed by code provider through author.",
+      "publication_sha256": "41a56a9f07ef7a37a853468b4272289148e3a82a5faa5695c37e50a38fabe2d7"
     }
   ],
-  "scientific_logic_changed": false,
+  "module_renames": {
+    "cot_prompt": "prompts"
+  },
   "patient_data_included": false,
   "API_calls_during_packaging": 0,
-  "publication_line_endings": "LF"
+  "line_endings": "LF",
+  "scope": "Author-returned CoT temperature 0; author-confirmed V3.2 shared companion modules; documentation updated. No analysis rerun.",
+  "previous_review_archive_sha256": "a7ca249fa2bc8bc80869e29c120124fccb19abc62439b3ba8b55cdf0105b5445",
+  "source_inference_configuration_updated": true,
+  "prompts_and_metric_logic_changed": false,
+  "analyses_rerun": false,
+  "author_confirmation": "Code provider returned corrected CoT scripts and confirmed V3.2 companion-module reuse; relayed by author.",
+  "packaging_note": "Author-confirmed code snapshot prepared for public access; source scope and validation limits are documented in docs/source_scope.md."
 }

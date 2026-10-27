@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2025/12/30 10:19
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : run_hcc_agents.py
+# @File : run_qwen_8b.py
 # @Software : PyCharm
 
 import asyncio

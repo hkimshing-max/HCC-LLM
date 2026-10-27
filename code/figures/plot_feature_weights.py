@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2026/4/17 10:58
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : weight_score_with_time.py
+# @File : plot_feature_weights.py
 # @Software : PyCharm
 
 import os

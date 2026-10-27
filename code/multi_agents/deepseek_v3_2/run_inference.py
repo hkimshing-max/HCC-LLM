@@ -1,8 +1,7 @@
 # --*-- conding:utf-8 --*--
-# @Time : 2025/12/30 10:19
 # @Author : Jacob Xu
 # Personal email omitted from publication copy; original author attribution retained.
-# @File : run_hcc_agents.py
+# @File : run_inference.py
 # @Software : PyCharm
 
 import asyncio
@@ -20,20 +19,17 @@ import pandas as pd
 from utils import save_messages_to_txt,load_patient_data,split_patient_json
 import agents_configs as a_configs
 import os
+
 from dotenv import load_dotenv
 load_dotenv()
 
-# apiKey = os.getenv("DEEPSEEK_API_KEY")
-
-API_KEY = os.getenv("DEEPSEEK_API_KEY")
-MODEL = os.getenv("DEEPSEEK_MODEL")          # DeepSeek-V3.2 官方模型名
-BASE_URL = os.getenv("DEEPSEEK_BASE_URL")
+API_KEY = os.environ.get('HCC_API_KEY', '')
 
 async def main(split_data,file_name,OUTPUT_DIR):
 
     model_client = OpenAIChatCompletionClient(
-        model=MODEL,
-        base_url=BASE_URL,
+        model="Pro/deepseek-ai/DeepSeek-V3.2",
+        base_url="https://api.siliconflow.cn/v1",
         api_key=API_KEY,
         temperature=0,
         model_info={
@@ -195,8 +191,7 @@ async def run_all_patients(DATA_DIR, OUTPUT_DIR, max_concurrent):
 if __name__ == "__main__":
     # asyncio 异步并发
     DATA_DIR = os.environ.get('HCC_DATA_DIR', 'data/test_json')
-    out_path = os.environ.get('HCC_OUTPUT_ROOT', 'outputs')
-    OUTPUT_DIR = os.environ.get('HCC_OUTPUT_DIR', os.path.join(out_path, 'test_DeepSeek-V4-flash-1'))
+    OUTPUT_DIR = os.environ.get('HCC_OUTPUT_DIR', os.path.join(DATA_DIR, 'test_DeepSeek-V3.2-2'))
 # Configure input/output locations using the HCC_* environment variables.
     # OUTPUT_DIR = os.path.join(DATA_DIR, 'test_result')
 

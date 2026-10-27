@@ -17,9 +17,11 @@ code/
   multi_agents/
     deepseek_v3_2/                   V3.2 agents, prompts, feedback and evaluation
     deepseek_v4_flash_preview/       Environment-configured V4 preview workflow
-    qwen_8B_hcc_agents.py            Qwen multi-agent orchestration
-    deepseek_r1_distill_qwen_7B_hcc_agents.py  Additional supplied runner
-  figs/                             Performance and explanation plots
+    utils.py                         Confirmed shared V3.2 utilities
+    agents_configs.py                Confirmed shared V3.2 agent definitions
+    run_qwen_8b.py                    Qwen multi-agent orchestration
+    run_deepseek_r1_distill_qwen_7b.py  Additional supplied runner
+  figures/                           Performance and explanation plots
 docs/
   input_formats.md                  Input keys and column requirements
   source_scope.md                   Source provenance and reproducibility limits
@@ -82,28 +84,30 @@ $env:HCC_OUTPUT_DIR = 'D:\local-results\v32_multi_agent'
 
 | Manuscript configuration | Entry point |
 |---|---|
-| DeepSeek-V3.2 CoT | `code/chain_of_thought/deepSeek_v32_run_cot.py` |
-| DeepSeek-R1-Distill-Qwen-7B CoT | `code/chain_of_thought/deepSeek-R1-Distill-Qwen-7B_run_cot.py` |
-| Qwen3-8B CoT | `code/chain_of_thought/qwen_8B_run_cot.py` |
-| DeepSeek-V3.2 multi-agent | `code/multi_agents/deepseek_v3_2/run_hcc_agents_deepseek.py` |
-| DeepSeek-V4-flash preview multi-agent | `code/multi_agents/deepseek_v4_flash_preview/run_hcc_agents_deepseek_v4.py` |
-| Qwen3-8B multi-agent | `code/multi_agents/qwen_8B_hcc_agents.py`; matching companion configuration required |
+| DeepSeek-V3.2 CoT | `code/chain_of_thought/run_deepseek_v3_2.py` |
+| DeepSeek-R1-Distill-Qwen-7B CoT | `code/chain_of_thought/run_deepseek_r1_distill_qwen_7b.py` |
+| Qwen3-8B CoT | `code/chain_of_thought/run_qwen_8b.py` |
+| DeepSeek-V3.2 multi-agent | `code/multi_agents/deepseek_v3_2/run_inference.py` |
+| DeepSeek-V4-flash preview multi-agent | `code/multi_agents/deepseek_v4_flash_preview/run_inference.py` |
+| Qwen3-8B multi-agent | `code/multi_agents/run_qwen_8b.py` |
 
 For example:
 
 ```bash
-python code/multi_agents/deepseek_v3_2/run_hcc_agents_deepseek.py
+python code/multi_agents/deepseek_v3_2/run_inference.py
 ```
 
 For CoT, select the corresponding entry point and a separate output directory.
-The Qwen multi-agent runner requires its matching `agents_configs.py` and
-`utils.py` on the Python module search path. Do not substitute prompts from
-another configuration without establishing that they are the intended files.
+The code provider confirmed that the standalone Qwen and additional R1
+multi-agent runners use the V3.2 companion modules. Identical copies of
+`agents_configs.py` and `utils.py` are included beside those runners in
+`code/multi_agents/`; model-specific DeepSeek directories retain their own files.
 
-The supplied scripts retain their original inference settings. CoT temperature
-is 0.1 in this snapshot and multi-agent temperature is 0. See
-`docs/source_scope.md` before interpreting this snapshot as an exact historical
-execution record.
+The three CoT runners returned by the code provider use temperature 0, consistent
+with the manuscript; the multi-agent runners also use temperature 0. This is an
+author-confirmed source correction from the earlier CoT value of 0.1. Packaging
+does not rerun the study or independently recover historical API execution.
+See `docs/source_scope.md` for source coverage and validation limits.
 
 ## Performance evaluation
 
@@ -111,9 +115,9 @@ Set `HCC_RESULT_DIR` to the saved transcript directory and `HCC_GROUND_TRUTH` to
 the local outcome-label CSV, then select the appropriate evaluator:
 
 ```bash
-python code/chain_of_thought/cot_performance_evaluate.py
-python code/multi_agents/deepseek_v3_2/performance_evaluate.py
-python code/multi_agents/deepseek_v4_flash_preview/performance_evaluate.py
+python code/chain_of_thought/evaluate.py
+python code/multi_agents/deepseek_v3_2/evaluate.py
+python code/multi_agents/deepseek_v4_flash_preview/evaluate.py
 ```
 
 These are alternative commands for their respective configurations. They are
@@ -131,9 +135,9 @@ Set `HCC_EXPLANATION_DIR` and, where required, `HCC_PREDICTIONS_CSV`. Set a
 separate `HCC_OUTPUT_DIR` for each command:
 
 ```bash
-python code/figs/weight_score_with_time.py
-python code/figs/conflict_win_with_time.py
-python code/figs/node_blocking.py
+python code/figures/plot_feature_weights.py
+python code/figures/plot_conflicts.py
+python code/figures/plot_conditional_blocking.py
 ```
 
 These scripts respectively implement explanation-assigned feature weights,
@@ -145,19 +149,19 @@ For performance plots including V4, set `HCC_METRICS_WORKBOOK` to a compatible
 aggregate workbook and run:
 
 ```bash
-python code/figs/model_test_results_present_with_dsv4.py
+python code/figures/plot_performance.py
 ```
 
-The older `model_test_results_present.py` is retained as supplied source and
+The older `plot_performance_basic.py` is retained as supplied source and
 does not replace the later V4 plotting entry point.
 
 ## Prompt development
 
-`train_and_self_refine.py` in each DeepSeek multi-agent directory collects
+`refine_prompts.py` in each DeepSeek multi-agent directory collects
 development-set predictions and outcome-informed feedback for prompt refinement.
 Use only an authorized development dataset for this operation. The normal test
 inference path does not use the outcome-feedback adapter. Prompt strings remain
-in `agents_configs.py` and `chain_of_thought/cot_prompt.py`.
+in `agents_configs.py` and `chain_of_thought/prompts.py`.
 
 ## Data availability
 
